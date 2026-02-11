@@ -1,4 +1,4 @@
-<p align="center" style="max-width: 50%;">
+<p align="center" width="50%">
   <img src="https://cdn.carrycode.ai/imgs/carrycode-ai-banner-light.png">
 </p>
 
