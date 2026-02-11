@@ -1,8 +1,6 @@
-<a href="https://carrycode.ai">
-  <p align="center" style="max-width: 50%;">
-    <img src="https://cdn.carrycode.ai/imgs/carrycode-ai-banner-light.png">
-  </p>
-</a>
+<p align="center" style="max-width: 50%;">
+  <img src="https://cdn.carrycode.ai/imgs/carrycode-ai-banner-light.png">
+</p>
 
 <p align="center">
   <strong>Your AI Coding Agent, Right in the Terminal.</strong>
