@@ -5,7 +5,7 @@
 <p align="center">
   <a href="./README.md">English</a> ·
   <a href="https://carrycode.ai">官网</a> ·
-  <a href="https://docs.carrycode.ai">文档</a>
+  <a href="https://marketplace.visualstudio.com/items?itemName=carrycodeai.carrycode-vscode">VSCode扩展</a>
 </p>
 
 ---
