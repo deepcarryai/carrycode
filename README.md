@@ -1,8 +1,6 @@
-```diff
--░▒█▀▀▄░█▀▀▄░▒█▀▀▄░▒█▀▀▄░▒█░░▒█░░░▒█▀▀▄░▒█▀▀▀█░▒█▀▀▄░▒█▀▀▀
--░▒█░░░▒█▄▄█░▒█▄▄▀░▒█▄▄▀░▒▀▄▄▄▀░░░▒█░░░░▒█░░▒█░▒█░▒█░▒█▀▀▀
--░▒█▄▄▀▒█░▒█░▒█░▒█░▒█░▒█░░░▒█░░░░░▒█▄▄▀░▒█▄▄▄█░▒█▄▄█░▒█▄▄▄
-```
+<p align="center">
+  <img src="https://cdn.carrycode.ai/imgs/carrycode-ai-banner-light.png">
+</p>
 
 <p align="center">
   <strong>Your AI Coding Agent, Right in the Terminal.</strong>

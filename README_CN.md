@@ -1,7 +1,5 @@
-<p align="center" font-color="#FF7F50">
-░▒█▀▀▄░█▀▀▄░▒█▀▀▄░▒█▀▀▄░▒█░░▒█░░░▒█▀▀▄░▒█▀▀▀█░▒█▀▀▄░▒█▀▀▀
-░▒█░░░▒█▄▄█░▒█▄▄▀░▒█▄▄▀░▒▀▄▄▄▀░░░▒█░░░░▒█░░▒█░▒█░▒█░▒█▀▀▀
-░▒█▄▄▀▒█░▒█░▒█░▒█░▒█░▒█░░░▒█░░░░░▒█▄▄▀░▒█▄▄▄█░▒█▄▄█░▒█▄▄▄
+<p align="center">
+  <img src="https://cdn.carrycode.ai/imgs/carrycode-ai-banner-light.png">
 </p>
 
 <p align="center">
