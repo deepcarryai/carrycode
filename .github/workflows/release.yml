@@ -1,0 +1,195 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-linux-x64:
+    name: Build - linux-x64 (ubuntu:20.04 container)
+    runs-on: ubuntu-latest
+    container: ubuntu:20.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install base dependencies (container)
+        run: |
+          apt-get update
+          apt-get install -y ca-certificates curl pkg-config libssl-dev xz-utils
+
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Rust Toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-unknown-linux-gnu
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: x86_64-unknown-linux-gnu
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Rust Native Module
+        shell: bash
+        run: npm run build:rust:linux-x64
+
+      - name: Build Bun Executable
+        shell: bash
+        run: npm run build:bun:linux-x64
+
+      - name: Prepare Artifact
+        shell: bash
+        run: |
+          cd dist-bun-linux-x64
+          tar -czvf ../carrycode-linux-x64.tar.gz *
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: carrycode-linux-x64
+          path: carrycode-linux-x64.tar.gz
+
+  build-and-upload:
+    name: Build - ${{ matrix.platform.release_for }}
+    runs-on: ${{ matrix.platform.os }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - release_for: linux-x64-musl
+            os: ubuntu-latest
+            target: x86_64-unknown-linux-musl
+            bun_target: bun-linux-x64-musl
+            npm_build: build:rust:linux-x64-musl
+            bun_build: build:bun:linux-x64-musl
+            artifact_name: carrycode-linux-x64-musl
+
+          - release_for: linux-arm64
+            os: ubuntu-24.04-arm
+            target: aarch64-unknown-linux-gnu
+            bun_target: bun-linux-arm64
+            npm_build: build:rust:linux-arm64
+            bun_build: build:bun:linux-arm64
+            artifact_name: carrycode-linux-arm64
+
+          - release_for: windows-x64
+            os: windows-latest
+            target: x86_64-pc-windows-msvc
+            bun_target: bun-windows-x64
+            npm_build: build:rust:win-x64
+            bun_build: build:bun:win-x64
+            artifact_name: carrycode-win-x64
+
+          - release_for: macos-x64
+            os: macos-latest
+            target: x86_64-apple-darwin
+            bun_target: bun-darwin-x64
+            npm_build: build:rust:mac-x64
+            bun_build: build:bun:mac-x64
+            artifact_name: carrycode-mac-x64
+
+          - release_for: macos-arm64
+            os: macos-latest
+            target: aarch64-apple-darwin
+            bun_target: bun-darwin-arm64
+            npm_build: build:rust:m1
+            bun_build: build:bun:m1
+            artifact_name: carrycode-mac-arm64
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Rust Toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.platform.target }}
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.platform.target }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install OpenSSL dev packages (Linux gnu)
+        if: runner.os == 'Linux' && matrix.platform.target != 'x86_64-unknown-linux-musl'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pkg-config libssl-dev
+
+      - name: Install musl-tools
+        if: matrix.platform.target == 'x86_64-unknown-linux-musl'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y musl-tools
+
+      - name: Build Rust Native Module
+        shell: bash
+        run: npm run ${{ matrix.platform.npm_build }}
+
+      - name: Build Bun Executable
+        shell: bash
+        run: npm run ${{ matrix.platform.bun_build }}
+
+      - name: Prepare Artifact
+        shell: bash
+        run: |
+          cd dist-${{ matrix.platform.bun_target }}
+          if [ "${{ matrix.platform.os }}" == "windows-latest" ]; then
+            7z a ../${{ matrix.platform.artifact_name }}.zip *
+          else
+            tar -czvf ../${{ matrix.platform.artifact_name }}.tar.gz *
+          fi
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.platform.artifact_name }}
+          path: ${{ matrix.platform.artifact_name }}.*
+
+  create-release:
+    needs:
+      - build-linux-x64
+      - build-and-upload
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Display structure of downloaded files
+        run: ls -R artifacts
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: artifacts/**/*

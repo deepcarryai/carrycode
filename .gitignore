@@ -1,0 +1,52 @@
+# Dependencies
+node_modules/
+
+# Build output
+target/
+dist/
+dist_ncc
+dist-bun
+dist*/
+
+# Rust
+Cargo.lock
+*.node
+
+# TypeScript
+*.tsbuildinfo
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment
+.env
+.env.local
+
+# Test
+coverage/
+.nyc_output/
+
+# Temporary
+*.tmp
+.cache/
+
+# Log
+logs/
+
+# Trea
+.trae/**
+
+# Doc
+docs/**

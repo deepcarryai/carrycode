@@ -1,0 +1,65 @@
+{
+  "name": "carrycode-cli",
+  "version": "0.5.0",
+  "type": "module",
+  "bin": {
+    "carry": "./target/index.js"
+  },
+  "scripts": {
+    "build:rust": "bun run clean:rust && napi build --platform --release && (mv *.node target/ 2>/dev/null || true)",
+    "build:ts": "tsc",
+    "build:bun": "bun scripts/build-bun.ts",
+    "build:rust:m1": "bun run clean:rust && napi build --platform --target aarch64-apple-darwin --release && (mv *.node target/ 2>/dev/null || true)",
+    "build:bun:m1": "bun scripts/build-bun.ts --target=bun-darwin-arm64",
+    "build:rust:linux-x64": "bun run clean:rust && napi build --platform --target x86_64-unknown-linux-gnu --release && (mv *.node target/ 2>/dev/null || true)",
+    "build:bun:linux-x64": "bun scripts/build-bun.ts --target=bun-linux-x64",
+    "build:rust:linux-x64-musl": "bun run clean:rust && napi build --platform --target x86_64-unknown-linux-musl --release && (mv *.node target/ 2>/dev/null || true)",
+    "build:bun:linux-x64-musl": "bun scripts/build-bun.ts --target=bun-linux-x64-musl",
+    "build:rust:linux-arm64": "bun run clean:rust && napi build --platform --target aarch64-unknown-linux-gnu --release && (mv *.node target/ 2>/dev/null || true)",
+    "build:bun:linux-arm64": "bun scripts/build-bun.ts --target=bun-linux-arm64",
+    "build:rust:win-x64": "bun run clean:rust && napi build --platform --target x86_64-pc-windows-msvc --release && (mv *.node target/ 2>/dev/null || true)",
+    "build:bun:win-x64": "bun scripts/build-bun.ts --target=bun-windows-x64",
+    "build:rust:mac-x64": "bun run clean:rust && napi build --platform --target x86_64-apple-darwin --release && (mv *.node target/ 2>/dev/null || true)",
+    "build:bun:mac-x64": "bun scripts/build-bun.ts --target=bun-darwin-x64",
+    "build": "npm run build:rust && npm run build:ts",
+    "prepack": "bun run build",
+    "clean:rust": "rm -rf target/napi-rs target/release target/x86_64-* target/.rustc_info.json 2>/dev/null || true",
+    "clean": "rm -rf target/ node_modules/ Cargo.lock bun.lockb",
+    "dev": "tsc --watch",
+    "start": "bun run build:ts && bun target/index.js"
+  },
+  "dependencies": {
+    "chalk": "^5.6.2",
+    "i18next": "^25.7.4",
+    "ink": "^6.6.0",
+    "ink-big-text": "^2.0.0",
+    "ink-gradient": "^3.0.0",
+    "ink-select-input": "^6.2.0",
+    "ink-stepper": "^0.2.1",
+    "marked": "^15.0.12",
+    "marked-terminal": "^7.3.0",
+    "react": "^19.2.3",
+    "react-i18next": "^16.5.3",
+    "winston": "^3.19.0"
+  },
+  "devDependencies": {
+    "@napi-rs/cli": "^3.0.0",
+    "@types/marked": "^5.0.2",
+    "@types/marked-terminal": "^6.1.1",
+    "@types/node": "^22.10.5",
+    "@types/react": "^19.0.0",
+    "@types/winston": "^2.4.4",
+    "react-devtools-core": "^6.1.5",
+    "typescript": "^5.7.3"
+  },
+  "napi": {
+    "binaryName": "carrycode-coreapi",
+    "triples": {}
+  },
+  "exports": {
+    ".": {
+      "import": "./target/carrycode-coreapi.linux-x64-gnu.node",
+      "require": "./target/carrycode-coreapi.linux-x64-gnu.node"
+    }
+  }
+}
