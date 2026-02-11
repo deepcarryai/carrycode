@@ -1,7 +1,12 @@
-<p align="center">
-  <strong>CarryCode</strong> — 你的 AI 编程智能体，就在终端里。
+<p align="center" font-color="#FF7F50">
+░▒█▀▀▄░█▀▀▄░▒█▀▀▄░▒█▀▀▄░▒█░░▒█░░░▒█▀▀▄░▒█▀▀▀█░▒█▀▀▄░▒█▀▀▀
+░▒█░░░▒█▄▄█░▒█▄▄▀░▒█▄▄▀░▒▀▄▄▄▀░░░▒█░░░░▒█░░▒█░▒█░▒█░▒█▀▀▀
+░▒█▄▄▀▒█░▒█░▒█░▒█░▒█░▒█░░░▒█░░░░░▒█▄▄▀░▒█▄▄▄█░▒█▄▄█░▒█▄▄▄
 </p>
 
+<p align="center">
+  <strong>Your AI Coding Agent, Right in the Terminal.</strong>
+</p>
 <p align="center">
   <a href="./README.md">English</a> ·
   <a href="https://carrycode.ai">官网</a> ·

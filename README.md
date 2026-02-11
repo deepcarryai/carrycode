@@ -1,5 +1,11 @@
+<p align="center" font-color="#FF7F50">
+░▒█▀▀▄░█▀▀▄░▒█▀▀▄░▒█▀▀▄░▒█░░▒█░░░▒█▀▀▄░▒█▀▀▀█░▒█▀▀▄░▒█▀▀▀
+░▒█░░░▒█▄▄█░▒█▄▄▀░▒█▄▄▀░▒▀▄▄▄▀░░░▒█░░░░▒█░░▒█░▒█░▒█░▒█▀▀▀
+░▒█▄▄▀▒█░▒█░▒█░▒█░▒█░▒█░░░▒█░░░░░▒█▄▄▀░▒█▄▄▄█░▒█▄▄█░▒█▄▄▄
+</p>
+
 <p align="center">
-  <strong>CarryCode</strong> — Your AI Coding Agent, Right in the Terminal.
+  <strong>Your AI Coding Agent, Right in the Terminal.</strong>
 </p>
 
 <p align="center">
