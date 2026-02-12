@@ -11,7 +11,7 @@
   <img src="https://visitor-badge.laobi.icu/badge?page_id=deepcarryai-carrycode-repo" />
   <span ><a href="https://carrycode.ai"><img alt="Static Badge" src="https://img.shields.io/badge/HOMEPAGE-CARRYCODE-blue?style=flat&logoColor=orange&color=pink&logo=operagx"></a></span>
   <span class="dot"></span>
-  <span ><a href="https://marketplace.visualstudio.com/items?itemName=carrycodeai.carrycode-vscode" target="_blank"><img alt="Static Badge" src="https://img.shields.io/badge/IDE-VSCode-8A2BE2?style=flat&logo=applearcade"></a></span>
+  <span ><a href="https://marketplace.visualstudio.com/items?itemName=carrycodeai.carrycode-vscode" target="_blank"><img alt="Static Badge" src="https://img.shields.io/badge/Extension-VSCode-8A2BE2?style=flat&logo=applearcade"></a></span>
   <span class="dot"></span>
   <span ><a href="https://github.com/deepcarryai/carrycode" target="_blank"><img alt="Static Badge" src="https://img.shields.io/badge/GITHUB-v0.6.7-green?style=flat&logo=github"></a></span>
   <span class="dot"></span>
