@@ -8,10 +8,16 @@
   <strong>Your AI Coding Agent, Right in the Terminal.</strong>
 </p>
 
+
 <p align="center">
-  <a href="./README_CN.md">Chinese</a> ·
-  <a href="https://carrycode.ai">Website</a> ·
-  <a href="https://marketplace.visualstudio.com/items?itemName=carrycodeai.carrycode-vscode">VSCode Expansion</a>
+  <img src="https://visitor-badge.laobi.icu/badge?page_id=deepcarryai-carrycode-repo" />
+  <span ><img alt="Static Badge" src="https://img.shields.io/badge/HOMEPAGE-CARRYCODE-blue?style=flat&logoColor=orange&color=pink&logo=operagx"></span>
+  <span class="dot"></span>
+  <span ><a href="https://marketplace.visualstudio.com/items?itemName=carrycodeai.carrycode-vscode" target="_blank"><img alt="Static Badge" src="https://img.shields.io/badge/IDE-VSCode-8A2BE2?style=flat&logo=applearcade"></a></span>
+  <span class="dot"></span>
+  <span ><a href="https://github.com/deepcarryai/carrycode" target="_blank"><img alt="Static Badge" src="https://img.shields.io/badge/GITHUB-v0.6.7-green?style=flat&logo=github"></a></span>
+  <span class="dot"></span>
+  <span ><a href="./README_CN.md"><img src="https://img.shields.io/badge/README-CN-red?style=flat&logo=readme" /></a><span >
 </p>
 
 ---
