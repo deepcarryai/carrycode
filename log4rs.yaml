@@ -1,0 +1,33 @@
+refresh_rate: 30 seconds
+
+appenders:
+  # File appender - logs to file
+  logfile:
+    kind: file
+    path: "logs/carrycode.log"
+    encoder:
+      pattern: "{d(%Y-%m-%d %H:%M:%S)} [{l}] {t} - {m}\n"
+
+  sessionfile:
+    kind: file
+    path: "logs/carrycode-session.log"
+    encoder:
+      pattern: "{m}\n"
+
+  # Console appender - logs to stdout
+  console:
+    kind: console
+    encoder:
+      pattern: "{d(%Y-%m-%d %H:%M:%S)} [{l}] {t} - {m}\n"
+
+loggers:
+  carrycode_session:
+    level: info
+    appenders:
+      - sessionfile
+    additive: false
+
+root:
+  level: debug
+  appenders:
+    - logfile

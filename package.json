@@ -1,0 +1,50 @@
+{
+  "name": "carrycode-cli",
+  "version": "0.5.0",
+  "type": "module",
+  "bin": {
+    "carry": "./target/index.js"
+  },
+  "scripts": {
+    "build:rust": "napi build --platform --release && mv *.node target/ 2>/dev/null || true && npm run clean:rust",
+    "build:ts": "tsc",
+    "build": "npm run build:rust && npm run build:ts",
+    "prepack": "npm run build",
+    "clean:rust": "rm -rf target/napi-rs target/release target/x86_64-* target/.rustc_info.json 2>/dev/null || true",
+    "clean": "rm -rf target/ node_modules/ Cargo.lock",
+    "dev": "tsc --watch",
+    "start": "npm run -s build:ts && node target/index.js"
+  },
+  "dependencies": {
+    "chalk": "^5.6.2",
+    "i18next": "^25.7.4",
+    "ink": "^5.0.1",
+    "ink-big-text": "^2.0.0",
+    "ink-gradient": "^3.0.0",
+    "ink-select-input": "^6.2.0",
+    "marked": "^15.0.12",
+    "marked-terminal": "^7.3.0",
+    "react": "^18.3.1",
+    "react-i18next": "^16.5.3",
+    "winston": "^3.19.0"
+  },
+  "devDependencies": {
+    "@napi-rs/cli": "^3.0.0",
+    "@types/marked": "^5.0.2",
+    "@types/marked-terminal": "^6.1.1",
+    "@types/node": "^22.10.5",
+    "@types/react": "^18.3.18",
+    "@types/winston": "^2.4.4",
+    "typescript": "^5.7.3"
+  },
+  "napi": {
+    "binaryName": "carrycode-coreapi",
+    "triples": {}
+  },
+  "exports": {
+    ".": {
+      "import": "./target/carrycode-coreapi.linux-x64-gnu.node",
+      "require": "./target/carrycode-coreapi.linux-x64-gnu.node"
+    }
+  }
+}
