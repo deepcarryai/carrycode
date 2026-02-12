@@ -15,7 +15,7 @@
   <span class="dot"></span>
   <span ><a href="https://github.com/deepcarryai/carrycode" target="_blank"><img alt="Static Badge" src="https://img.shields.io/badge/GITHUB-v0.6.7-green?style=flat&logo=github"></a></span>
   <span class="dot"></span>
-  <span ><a href="./README.md"><img src="https://img.shields.io/badge/README-CN-red?style=flat&logo=readme" /></a><span >
+  <span ><a href="./README.md"><img src="https://img.shields.io/badge/README-EN-red?style=flat&logo=readme" /></a><span >
 </p>
 
 ---
