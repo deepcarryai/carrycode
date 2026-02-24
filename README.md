@@ -52,7 +52,7 @@
 - 📋 **AGENTS.md** — Drop an `AGENTS.md` file in your project root to give CarryCode project-specific instructions and conventions.
 - 🎨 **Beautiful Terminal UI** — Rich TUI with gradient banners, Markdown rendering, syntax-highlighted code blocks, and inline diff previews.
 - 🌗 **Themes** — Switch between light and dark themes for code highlighting and diff previews via `/theme`.
-- 🌍 **Multi-Language** — English and 简体中文 interface. Switch anytime via `/language`.
+- 🌍 **Multi-Language** — English and Chinese interface. Switch anytime via `/language`.
 - 💬 **Session Management** — Create, switch, and resume sessions. Context is preserved across conversations.
 - 🗜️ **Smart Context Compaction** — Automatically compresses long conversations to stay within token limits while preserving key context.
 - 🩺 **LSP Diagnostics** — Integrated Language Server Protocol support (e.g., rust-analyzer) for real-time error and warning detection.
