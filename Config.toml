@@ -4,15 +4,112 @@ tips = []
 theme = "carrycode-dark"
 
 [agent]
-default_agent_mode = "build"     # "build", "plan"
-default_approvle_mode = "agent"  # "read-only", "agent", "agent-full"
+default_agent_mode = "build"    # "build", "plan"
+default_approvle_mode = "agent" # "read-only", "agent", "agent-full"
 
 [tool_bash]
 tool_name = "bash"
 tool_kind = "Execute"
 tool_operation = "Bash"
-banned_commands = ["alias", "curl", "curlie", "wget", "axel", "aria2c", "nc", "telnet", "lynx", "w3m", "links", "httpie", "xh", "http-prompt", "chrome", "firefox", "safari",]
-safe_read_only_commands = ["gcc", "npm", "cargo", "ls", "echo", "pwd", "date", "cal", "uptime", "whoami", "id", "groups", "env", "printenv", "set", "unset", "which", "type", "whereis", "whatis", "uname", "hostname", "df", "du", "free", "top", "ps", "kill", "killall", "nice", "nohup", "time", "timeout", "git status", "git log", "git diff", "git show", "git branch", "git tag", "git remote", "git ls-files", "git ls-remote", "git rev-parse", "git config --get", "git config --list", "git describe", "git blame", "git grep", "git shortlog","ls","stat","file","cat","less","more","head","tail","wc","grep","uname","uptime","free","lscpu","ps","top","pidof","pstree","df","du","lsblk","mount","ip","ss","ping","id","whoami","groups","who"]
+banned_commands = [
+  "alias",
+  "curl",
+  "curlie",
+  "wget",
+  "axel",
+  "aria2c",
+  "nc",
+  "telnet",
+  "lynx",
+  "w3m",
+  "links",
+  "httpie",
+  "xh",
+  "http-prompt",
+  "chrome",
+  "firefox",
+  "safari",
+]
+safe_read_only_commands = [
+  "gcc",
+  "npm",
+  "cargo",
+  "ls",
+  "echo",
+  "pwd",
+  "date",
+  "cal",
+  "uptime",
+  "whoami",
+  "id",
+  "groups",
+  "env",
+  "printenv",
+  "set",
+  "unset",
+  "which",
+  "type",
+  "whereis",
+  "whatis",
+  "uname",
+  "hostname",
+  "df",
+  "du",
+  "free",
+  "top",
+  "ps",
+  "kill",
+  "killall",
+  "nice",
+  "nohup",
+  "time",
+  "timeout",
+  "git status",
+  "git log",
+  "git diff",
+  "git show",
+  "git branch",
+  "git tag",
+  "git remote",
+  "git ls-files",
+  "git ls-remote",
+  "git rev-parse",
+  "git config --get",
+  "git config --list",
+  "git describe",
+  "git blame",
+  "git grep",
+  "git shortlog",
+  "ls",
+  "stat",
+  "file",
+  "cat",
+  "less",
+  "more",
+  "head",
+  "tail",
+  "wc",
+  "grep",
+  "uname",
+  "uptime",
+  "free",
+  "lscpu",
+  "ps",
+  "top",
+  "pidof",
+  "pstree",
+  "df",
+  "du",
+  "lsblk",
+  "mount",
+  "ip",
+  "ss",
+  "ping",
+  "id",
+  "whoami",
+  "groups",
+  "who",
+]
 description = '''
 [CORE SYSTEM] Executes a single bash command in a persistent shell session. Best for builds, scripts, dependency installs, and environment checks.
 
@@ -291,7 +388,18 @@ tool_name = "ls"
 tool_kind = "Search"
 tool_operation = "Explored"
 max_ls_files = 1000
-default_ignore = ["node_modules/**", "__pycache__/**", ".git/**", "*.pyc", ".DS_Store", "target/**", "dist/**", "build/**", ".vscode/**", ".idea/**"]
+default_ignore = [
+  "node_modules/**",
+  "__pycache__/**",
+  ".git/**",
+  "*.pyc",
+  ".DS_Store",
+  "target/**",
+  "dist/**",
+  "build/**",
+  ".vscode/**",
+  ".idea/**",
+]
 description = '''
 [CORE SYSTEM] Directory tree viewer for quick understanding of project layout.
 
