@@ -22,7 +22,7 @@
 
 ---
 
-**CarryCode** is a terminal-native AI coding agent that helps you write, refactor, debug, and understand code — all through natural conversation. It connects to 17+ LLM providers, supports the MCP protocol for extensibility, and delivers a beautiful terminal UI with themes, syntax highlighting, and code diff previews.
+**CarryCode** is a terminal-native AI coding agent that helps you write, refactor, debug, and understand code — all through natural conversation. It connects to 17+ LLM providers(OpenAI, Anthropic Claude, Google Gemini, OpenRouter, Ollma, vllm, GLM, KIMI, MiniMax, DeepSeek, Alibaba Claude etc), supports the **MCP** protocol for extensibility, supports the **SKILL** which is compatiable with claude code, supports **AGENTS.md** as project RULES, and delivers a beautiful terminal UI with themes, syntax highlighting, and code diff previews.
 
 <details open>
   <summary><strong>Ocean of Stars</strong></summary>

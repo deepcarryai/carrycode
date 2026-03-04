@@ -20,7 +20,7 @@
 
 ---
 
-**CarryCode** 是一款终端原生的 AI 编程智能体，通过自然对话帮你编写、重构、调试和理解代码。它接入了 17+ 个大模型服务商，支持 MCP 协议扩展，并提供精美的终端 UI，包含主题切换、语法高亮和代码 Diff 预览。
+**CarryCode** 是一款终端原生 AI 代码代理，它能通过自然对话帮助您编写、重构、调试和理解代码。它支持 17 个以上的 LLM 提供商（包括 OpenAI、Anthropic Claude、Google Gemini、OpenRouter、Ollma、vllm、GLM、KIMI、MiniMax、DeepSeek、Alibaba Claude 等），支持 **MCP** 协议以实现扩展，支持与 Claude Code兼容的 **SKILL**，支持使用 **AGENTS.md** 作为项目规则，并提供美观的终端用户界面，支持主题、语法高亮和代码差异预览。
 
 <details open>
   <summary><strong>Ocean of Stars</strong></summary>
