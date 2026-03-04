@@ -109,6 +109,55 @@ carry --once "Explain what this function does"
 carry --once "Add error handling to server.js" --timeout-ms 60000
 ```
 
+## 🔨 Building from Source
+
+### Prerequisites
+
+- **Rust** (latest stable) - [Install via rustup](https://rustup.rs/)
+- **Node.js** (v18+)
+- **Bun** - [Install via bun.sh](https://bun.sh)
+- **Build essentials** (for your OS):
+  - Linux: `build-essential`, `pkg-config`, `libssl-dev`
+  - macOS: Xcode Command Line Tools
+  - Windows: Visual Studio Build Tools
+
+### Build Commands
+
+```bash
+# Install dependencies
+bun install
+
+# Full build (Rust + TypeScript)
+bun run build
+
+# Or build separately:
+bun run build:rust   # Compile Rust to Node native module
+bun run build:ts     # Compile TypeScript
+
+# Development mode (watch TypeScript)
+bun run dev
+```
+
+### Build Output
+
+After building, the executable will be at:
+- `./target/index.js` - Main CLI entry point
+- `./target/*.node` - Native Rust module
+
+Run with:
+```bash
+node target/index.js
+# or
+./target/index.js
+```
+
+### Cleaning Build Artifacts
+
+```bash
+bun run clean        # Clean all build artifacts
+bun run clean:rust   # Clean only Rust build artifacts
+```
+
 ## ⌨️ Slash Commands
 
 Type `/` in the input area to access the command menu:

@@ -107,6 +107,55 @@ carry --once "解释这个函数的作用"
 carry --once "给 server.js 添加错误处理" --timeout-ms 60000
 ```
 
+## 🔨 从源码构建
+
+### 前置条件
+
+- **Rust**（最新稳定版）- [通过 rustup 安装](https://rustup.rs/)
+- **Node.js**（v18+）
+- **Bun** - [通过 bun.sh 安装](https://bun.sh)
+- **构建工具**（各操作系统）：
+  - Linux：`build-essential`、`pkg-config`、`libssl-dev`
+  - macOS：Xcode Command Line Tools
+  - Windows：Visual Studio Build Tools
+
+### 构建命令
+
+```bash
+# 安装依赖
+bun install
+
+# 完整构建（Rust + TypeScript）
+bun run build
+
+# 或分别构建：
+bun run build:rust   # 编译 Rust 为 Node 原生模块
+bun run build:ts     # 编译 TypeScript
+
+# 开发模式（监听 TypeScript 变化）
+bun run dev
+```
+
+### 构建产物
+
+构建完成后，可执行文件位于：
+- `./target/index.js` - 主 CLI 入口
+- `./target/*.node` - Rust 原生模块
+
+运行方式：
+```bash
+node target/index.js
+# 或
+./target/index.js
+```
+
+### 清理构建产物
+
+```bash
+bun run clean        # 清理所有构建产物
+bun run clean:rust   # 仅清理 Rust 构建产物
+```
+
 ## ⌨️ 斜杠命令
 
 在输入区域输入 `/` 即可打开命令菜单：
