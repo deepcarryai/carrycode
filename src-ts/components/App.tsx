@@ -250,9 +250,9 @@ export function App() {
     setLoading(true);
     const question = input;
     const requestStartTime = Date.now();
-    
+
     setMessages(prev => [...prev, { question, segments: [], startTime: requestStartTime }]);
-    
+
     setLiveMessage({ question, segments: [], startTime: requestStartTime });
 
     try {
@@ -521,33 +521,33 @@ export function App() {
 
       const endTime = Date.now();
       const duration = endTime - requestStartTime;
-      
+
       setMessages(prev => {
-          const lastIndex = prev.length - 1;
-          if (lastIndex < 0) return prev;
-          const next = [...prev];
-          next[lastIndex] = { ...next[lastIndex], duration };
-          return next;
+        const lastIndex = prev.length - 1;
+        if (lastIndex < 0) return prev;
+        const next = [...prev];
+        next[lastIndex] = { ...next[lastIndex], duration };
+        return next;
       });
-      
+
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : 'Unknown error';
       setMessages(prev => {
-          const lastIndex = prev.length - 1;
-          if (lastIndex < 0) return prev;
-          const lastMsg = prev[lastIndex];
-          const errorSegment: StageSegment = {
-              stage: '__ANSWERING__',
-              title: t('status.error'),
-              content: `Error: ${errorMsg}`,
-              tools: []
-          };
-          const next = [...prev];
-          next[lastIndex] = { 
-              ...lastMsg, 
-              segments: [...lastMsg.segments, errorSegment] 
-          };
-          return next;
+        const lastIndex = prev.length - 1;
+        if (lastIndex < 0) return prev;
+        const lastMsg = prev[lastIndex];
+        const errorSegment: StageSegment = {
+          stage: '__ANSWERING__',
+          title: t('status.error'),
+          content: `Error: ${errorMsg}`,
+          tools: []
+        };
+        const next = [...prev];
+        next[lastIndex] = {
+          ...lastMsg,
+          segments: [...lastMsg.segments, errorSegment]
+        };
+        return next;
       });
     } finally {
       setLoading(false);

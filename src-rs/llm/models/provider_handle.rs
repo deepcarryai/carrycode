@@ -10,10 +10,8 @@ use crate::config::ProviderConfig;
 use super::claude::ClaudeClient;
 use super::codex::CodexClient;
 use super::gemini::GeminiClient;
-use super::openai::{
-    create_deepseek, create_openai, create_qwen, create_zhipuai, OpenAiClient,
-};
-pub use super::provider_base::{Message, ProviderClient};
+use super::openai::{ create_deepseek, create_openai, create_qwen, create_zhipuai, OpenAiClient };
+pub use super::provider_base::{ Message, ProviderClient };
 
 pub enum AnyProviderClient {
     Claude(ClaudeClient),
@@ -26,7 +24,7 @@ impl ProviderClient for AnyProviderClient {
     async fn stream_chat(
         &self,
         messages: Vec<Message>,
-        tools: Option<Vec<Value>>,
+        tools: Option<Vec<Value>>
     ) -> Result<Pin<Box<dyn Stream<Item = Result<Value>> + Send>>> {
         match self {
             AnyProviderClient::Claude(c) => c.stream_chat(messages, tools).await,
@@ -51,22 +49,31 @@ pub fn create_client(
     base_url: String,
     api_key: String,
     model_name: String,
-    system_prompt: Option<String>,
+    system_prompt: Option<String>
 ) -> AnyProviderClient {
     match provider.to_lowercase().as_str() {
-        "anthropic" | "claude" => AnyProviderClient::Claude(
-            ClaudeClient::new(base_url, api_key, model_name).with_system_prompt(system_prompt),
-        ),
-        "codex" => AnyProviderClient::Codex(
-            CodexClient::new(base_url, api_key, model_name).with_system_prompt(system_prompt),
-        ),
-        "gemini" => AnyProviderClient::Gemini(
-            GeminiClient::new(base_url, api_key, model_name).with_system_prompt(system_prompt),
-        ),
-        "openai" => AnyProviderClient::OpenAI(create_openai(base_url, api_key, model_name, system_prompt)),
-        "zhipuai" => AnyProviderClient::OpenAI(create_zhipuai(base_url, api_key, model_name, system_prompt)),
-        "deepseek" => AnyProviderClient::OpenAI(create_deepseek(base_url, api_key, model_name, system_prompt)),
-        "qwen" => AnyProviderClient::OpenAI(create_qwen(base_url, api_key, model_name, system_prompt)),
+        "anthropic" | "claude" =>
+            AnyProviderClient::Claude(
+                ClaudeClient::new(base_url, api_key, model_name).with_system_prompt(system_prompt)
+            ),
+        "codex" =>
+            AnyProviderClient::Codex(
+                CodexClient::new(base_url, api_key, model_name).with_system_prompt(system_prompt)
+            ),
+        "gemini" =>
+            AnyProviderClient::Gemini(
+                GeminiClient::new(base_url, api_key, model_name).with_system_prompt(system_prompt)
+            ),
+        "openai" =>
+            AnyProviderClient::OpenAI(create_openai(base_url, api_key, model_name, system_prompt)),
+        "zhipuai" =>
+            AnyProviderClient::OpenAI(create_zhipuai(base_url, api_key, model_name, system_prompt)),
+        "deepseek" =>
+            AnyProviderClient::OpenAI(
+                create_deepseek(base_url, api_key, model_name, system_prompt)
+            ),
+        "qwen" =>
+            AnyProviderClient::OpenAI(create_qwen(base_url, api_key, model_name, system_prompt)),
         _ => AnyProviderClient::OpenAI(create_openai(base_url, api_key, model_name, system_prompt)),
     }
 }
@@ -82,7 +89,7 @@ impl ProviderClientFactory {
         provider_name: &str,
         model_name: &str,
         provider_configs: &[ProviderConfig],
-        system_prompt: Option<String>,
+        system_prompt: Option<String>
     ) -> Result<Arc<AnyProviderClient>> {
         let key = (provider_name.to_string(), model_name.to_string());
 
@@ -103,7 +110,7 @@ impl ProviderClientFactory {
             config.base_url.clone(),
             config.api_key.clone(),
             model_name.to_string(),
-            system_prompt,
+            system_prompt
         );
 
         let client = Arc::new(client);

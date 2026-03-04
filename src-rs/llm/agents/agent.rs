@@ -1,13 +1,21 @@
 use crate::llm::models::provider_handle::{
-    AnyProviderClient, Message, ProviderClient, ProviderClientFactory,
+    AnyProviderClient,
+    Message,
+    ProviderClient,
+    ProviderClientFactory,
 };
 use crate::llm::tools::tool_trait::{
-    Tool, ToolKind, ToolOperation, ToolOutput, ToolResult, TOOL_RESULT_VERSION,
+    Tool,
+    ToolKind,
+    ToolOperation,
+    ToolOutput,
+    ToolResult,
+    TOOL_RESULT_VERSION,
 };
 use crate::session::key_path_from_args;
-use anyhow::{Context, Result};
-use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use anyhow::{ Context, Result };
+use serde::{ Deserialize, Serialize };
+use serde_json::{ json, Value };
 use std::collections::HashMap;
 use std::sync::Arc;
 use tokio_stream::StreamExt;
@@ -17,7 +25,7 @@ fn tool_result_from_execution(
     args: &str,
     kind: ToolKind,
     operation: ToolOperation,
-    execution_result: &Result<String>,
+    execution_result: &Result<String>
 ) -> ToolResult {
     let key_path = key_path_from_args(tool_name, args);
 
@@ -29,7 +37,11 @@ fn tool_result_from_execution(
                     parsed.kind = kind;
                     parsed.operation = operation;
                     parsed.key_path = key_path;
-                    if parsed.response_summary.as_ref().map(|s| s.trim().is_empty()).unwrap_or(true)
+                    if
+                        parsed.response_summary
+                            .as_ref()
+                            .map(|s| s.trim().is_empty())
+                            .unwrap_or(true)
                     {
                         parsed.response_summary = Some("no output".to_string());
                     }
@@ -97,20 +109,21 @@ fn tool_result_from_execution(
                 data: json!({ "raw": result }),
             }
         }
-        Err(e) => ToolResult {
-            version: TOOL_RESULT_VERSION,
-            tool_name: tool_name.to_string(),
-            kind,
-            operation,
-            key_path,
-            success: false,
-            requires_confirmation: false,
-            executed: true,
-            response_summary: Some("error".to_string()),
-            stdout: String::new(),
-            stderr: e.to_string(),
-            data: json!({ "error": e.to_string() }),
-        },
+        Err(e) =>
+            ToolResult {
+                version: TOOL_RESULT_VERSION,
+                tool_name: tool_name.to_string(),
+                kind,
+                operation,
+                key_path,
+                success: false,
+                requires_confirmation: false,
+                executed: true,
+                response_summary: Some("error".to_string()),
+                stdout: String::new(),
+                stderr: e.to_string(),
+                data: json!({ "error": e.to_string() }),
+            },
     }
 }
 
@@ -134,13 +147,13 @@ pub type StreamCallback = Arc<dyn Fn(StreamEvent) + Send + Sync>;
 /// Takes (tool_ref, tool_name, arguments) and returns Result<String>
 /// The callback receives the tool reference so it can execute it after confirmation
 pub type ToolExecutorCallback = Arc<
-    dyn Fn(
-            &Box<dyn Tool>,
-            &str,
-            &str,
-        ) -> std::pin::Pin<Box<dyn std::future::Future<Output = Result<String>> + Send>>
-        + Send
-        + Sync,
+    dyn (Fn(
+        &Box<dyn Tool>,
+        &str,
+        &str
+    ) -> std::pin::Pin<Box<dyn std::future::Future<Output = Result<String>> + Send>>) +
+        Send +
+        Sync
 >;
 
 use crate::config::ProviderConfig;
@@ -194,14 +207,14 @@ impl Agent {
         model_name: String,
         system_prompt: Option<String>,
         provider_configs: Vec<ProviderConfig>,
-        tools: Vec<Box<dyn Tool>>,
+        tools: Vec<Box<dyn Tool>>
     ) -> Result<Self> {
         let mut client_factory = ProviderClientFactory::default();
         let client = client_factory.get_or_create(
             &provider_name,
             &model_name,
             &provider_configs,
-            system_prompt.clone(),
+            system_prompt.clone()
         )?;
 
         Ok(Self {
@@ -236,18 +249,15 @@ impl Agent {
 
     /// Set current model and update provider if necessary
     pub fn set_model(&mut self, provider_name: &str, model_name: &str) -> Result<()> {
-        let config = self
-            .provider_configs
+        let config = self.provider_configs
             .iter()
             .find(|c| c.name == provider_name)
             .ok_or_else(|| anyhow::anyhow!("Provider not found: {}", provider_name))?;
 
         if !config.models.contains(&model_name.to_string()) {
-            return Err(anyhow::anyhow!(
-                "Model {} not found in provider {}",
-                model_name,
-                provider_name
-            ));
+            return Err(
+                anyhow::anyhow!("Model {} not found in provider {}", model_name, provider_name)
+            );
         }
 
         self.provider_name = provider_name.to_string();
@@ -256,7 +266,7 @@ impl Agent {
             &self.provider_name,
             &self.model_name,
             &self.provider_configs,
-            self.system_prompt.clone(),
+            self.system_prompt.clone()
         )?;
 
         Ok(())
@@ -268,7 +278,7 @@ impl Agent {
             &self.provider_name,
             &self.model_name,
             &self.provider_configs,
-            self.system_prompt.clone(),
+            self.system_prompt.clone()
         )?;
         Ok(())
     }
@@ -300,7 +310,7 @@ impl Agent {
         provider_name: String,
         model_name: String,
         system_prompt: Option<String>,
-        provider_configs: Vec<ProviderConfig>,
+        provider_configs: Vec<ProviderConfig>
     ) -> Result<Self> {
         Self::new(provider_name, model_name, system_prompt, provider_configs, Vec::new())
     }
@@ -310,8 +320,7 @@ impl Agent {
     /// # Arguments
     /// * `callback` - Function to call with each chunk of content
     pub fn set_stream_callback<F>(&mut self, callback: F)
-    where
-        F: Fn(StreamEvent) + Send + Sync + 'static,
+        where F: Fn(StreamEvent) + Send + Sync + 'static
     {
         self.stream_callback = Some(Arc::new(callback));
     }
@@ -375,8 +384,7 @@ impl Agent {
         let mut tools_used = false;
 
         // Prepare tool definitions
-        let tools: Vec<Value> = self
-            .tools
+        let tools: Vec<Value> = self.tools
             .iter()
             .map(|tool| tool.to_tool_definition())
             .collect();
@@ -385,15 +393,15 @@ impl Agent {
             log::info!("Calling LLM with {} messages", self.messages.len());
 
             // Get streaming response from LLM
-            let mut stream = self
-                .client
-                .stream_chat(self.messages.clone(), Some(tools.clone()))
-                .await
+            let mut stream = self.client
+                .stream_chat(self.messages.clone(), Some(tools.clone())).await
                 .context("Failed to initiate LLM stream")?;
 
             let mut current_content = String::new();
-            let mut tool_calls_map: HashMap<usize, (Option<String>, Option<String>, String)> =
-                HashMap::new();
+            let mut tool_calls_map: HashMap<
+                usize,
+                (Option<String>, Option<String>, String)
+            > = HashMap::new();
             let mut finish_reason: Option<String> = None;
 
             let mut thinking_sent = false;
@@ -409,13 +417,17 @@ impl Agent {
                 if let Some(choices) = chunk.get("choices").and_then(|c| c.as_array()) {
                     for choice in choices {
                         if let Some(delta) = choice.get("delta") {
-                            if let Some(reasoning) =
-                                delta.get("reasoning_content").and_then(|c| c.as_str())
+                            if
+                                let Some(reasoning) = delta
+                                    .get("reasoning_content")
+                                    .and_then(|c| c.as_str())
                             {
                                 if !reasoning.trim().is_empty() {
                                     if !thinking_sent {
                                         if let Some(ref callback) = self.stream_callback {
-                                            callback(StreamEvent::StageStart(StreamStage::Thinking));
+                                            callback(
+                                                StreamEvent::StageStart(StreamStage::Thinking)
+                                            );
                                         }
                                         thinking_sent = true;
                                     }
@@ -435,7 +447,9 @@ impl Agent {
                                     }
                                     if !answering_sent {
                                         if let Some(ref callback) = self.stream_callback {
-                                            callback(StreamEvent::StageStart(StreamStage::Answering));
+                                            callback(
+                                                StreamEvent::StageStart(StreamStage::Answering)
+                                            );
                                         }
                                         answering_sent = true;
                                     }
@@ -447,15 +461,16 @@ impl Agent {
                             }
 
                             // Check for tool calls - accumulate incrementally
-                            if let Some(calls) = delta.get("tool_calls").and_then(|t| t.as_array())
-                            {
+                            if let Some(calls) = delta.get("tool_calls").and_then(|t| t.as_array()) {
                                 for call in calls {
-                                    let index =
-                                        call.get("index").and_then(|i| i.as_u64()).unwrap_or(0)
-                                            as usize;
+                                    let index = call
+                                        .get("index")
+                                        .and_then(|i| i.as_u64())
+                                        .unwrap_or(0) as usize;
 
-                                    let entry =
-                                        tool_calls_map.entry(index).or_insert((None, None, String::new()));
+                                    let entry = tool_calls_map
+                                        .entry(index)
+                                        .or_insert((None, None, String::new()));
 
                                     if let Some(id) = call.get("id").and_then(|v| v.as_str()) {
                                         if entry.0.is_none() {
@@ -465,15 +480,19 @@ impl Agent {
 
                                     if let Some(function) = call.get("function") {
                                         // Accumulate function name
-                                        if let Some(name) =
-                                            function.get("name").and_then(|n| n.as_str())
+                                        if
+                                            let Some(name) = function
+                                                .get("name")
+                                                .and_then(|n| n.as_str())
                                         {
                                             entry.1 = Some(name.to_string());
                                         }
 
                                         // Accumulate arguments
-                                        if let Some(args) =
-                                            function.get("arguments").and_then(|a| a.as_str())
+                                        if
+                                            let Some(args) = function
+                                                .get("arguments")
+                                                .and_then(|a| a.as_str())
                                         {
                                             entry.2.push_str(args);
                                         }
@@ -499,13 +518,16 @@ impl Agent {
             let tool_calls_json_str = if !tool_calls_map.is_empty() {
                 let mut calls: Vec<_> = tool_calls_map.iter().collect();
                 calls.sort_by_key(|(k, _)| **k);
-                let list: Vec<Value> = calls.into_iter().map(|(_, (id, name, args))| {
-                    json!({
+                let list: Vec<Value> = calls
+                    .into_iter()
+                    .map(|(_, (id, name, args))| {
+                        json!({
                         "id": id.clone().unwrap_or_default(),
                         "name": name.clone().unwrap_or_default(),
                         "arguments": args
                     })
-                }).collect();
+                    })
+                    .collect();
                 Some(serde_json::to_string(&list).unwrap_or_default())
             } else {
                 None
@@ -553,9 +575,7 @@ impl Agent {
 
                     let tool_ref = self.find_tool(tool_name);
                     let kind = tool_ref.map(|t| t.kind()).unwrap_or(ToolKind::Other);
-                    let op = tool_ref
-                        .map(|t| t.operation())
-                        .unwrap_or(ToolOperation::Other);
+                    let op = tool_ref.map(|t| t.operation()).unwrap_or(ToolOperation::Other);
 
                     // Use tool_executor_callback if set, otherwise use default execute_tool
                     let execution_result = if let Some(ref callback) = self.tool_executor_callback {
@@ -571,10 +591,18 @@ impl Agent {
                         self.execute_tool(tool_name, arguments).await
                     };
 
-                    let tool_result =
-                        tool_result_from_execution(tool_name, arguments, kind, op, &execution_result);
-                    let tool_result_json = serde_json::to_string_pretty(&tool_result)
-                        .unwrap_or_else(|_| "{\"error\":\"failed to serialize ToolResult\"}".to_string());
+                    let tool_result = tool_result_from_execution(
+                        tool_name,
+                        arguments,
+                        kind,
+                        op,
+                        &execution_result
+                    );
+                    let tool_result_json = serde_json
+                        ::to_string_pretty(&tool_result)
+                        .unwrap_or_else(|_|
+                            "{\"error\":\"failed to serialize ToolResult\"}".to_string()
+                        );
 
                     tool_results.push(ToolExecutionResult {
                         tool_name: tool_name.to_string(),
@@ -584,9 +612,9 @@ impl Agent {
 
                     if !tool_result.success {
                         log::warn!(
-                            "Tool '{}' execution failed. Error: {}. Arguments (first 500 chars): {:.500}", 
-                            tool_name, 
-                            tool_result.stderr, 
+                            "Tool '{}' execution failed. Error: {}. Arguments (first 500 chars): {:.500}",
+                            tool_name,
+                            tool_result.stderr,
                             arguments
                         );
                     }
@@ -594,13 +622,17 @@ impl Agent {
                     match &*self.client {
                         AnyProviderClient::Claude(_) => {
                             let tool_use_id = tool_call_id_opt.unwrap_or_default();
-                            let result_value: Value = serde_json::from_str(&tool_result_json)
+                            let result_value: Value = serde_json
+                                ::from_str(&tool_result_json)
                                 .unwrap_or_else(|_| json!({ "raw": tool_result_json }));
-                            let payload = json!({
+                            let payload =
+                                json!({
                                 "tool_use_id": tool_use_id,
                                 "result": result_value
                             });
-                            self.add_user_message(format!("ToolResultJSON:{}", payload.to_string()));
+                            self.add_user_message(
+                                format!("ToolResultJSON:{}", payload.to_string())
+                            );
                         }
                         _ => self.add_user_message(format!("ToolResult:\n{}", tool_result_json)),
                     }
@@ -647,8 +679,7 @@ impl Agent {
     /// It's now public to allow tool execution callbacks to use it.
     pub async fn execute_tool(&self, tool_name: &str, arguments: &str) -> Result<String> {
         // Find the tool
-        let tool_index = self
-            .tools
+        let tool_index = self.tools
             .iter()
             .position(|t| t.name() == tool_name)
             .ok_or_else(|| anyhow::anyhow!("Unknown tool: {}", tool_name))?;

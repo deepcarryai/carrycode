@@ -1,23 +1,26 @@
-use anyhow::{Context, Result};
-use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use anyhow::{ Context, Result };
+use serde::{ Deserialize, Serialize };
+use serde_json::{ json, Value };
 use std::pin::Pin;
 use std::time::Duration;
 use tokio_stream::Stream;
 
-use crate::llm::models::provider_base::{Message, ProviderClient};
+use crate::llm::models::provider_base::{ Message, ProviderClient };
 
 fn extract_sse_frame_from_buffer(buffer: &mut Vec<u8>) -> Option<Vec<u8>> {
     let mut delimiter_len = 0usize;
-    let delimiter_pos = if let Some(pos) = buffer.windows(4).position(|w| w == b"\r\n\r\n") {
+    let delimiter_pos = (if let Some(pos) = buffer.windows(4).position(|w| w == b"\r\n\r\n") {
         delimiter_len = 4;
         Some(pos)
     } else {
-        buffer.windows(2).position(|w| w == b"\n\n").map(|pos| {
-            delimiter_len = 2;
-            pos
-        })
-    }?;
+        buffer
+            .windows(2)
+            .position(|w| w == b"\n\n")
+            .map(|pos| {
+                delimiter_len = 2;
+                pos
+            })
+    })?;
 
     let frame = buffer.drain(..delimiter_pos).collect::<Vec<u8>>();
     buffer.drain(..delimiter_len);
@@ -54,12 +57,14 @@ fn stream_value_from_gemini_event(event: &Value) -> Option<Value> {
         .and_then(|v| v.as_str())
         .or_else(|| event.get("finish_reason").and_then(|v| v.as_str()));
     if finish_reason.is_some_and(|r| r.eq_ignore_ascii_case("stop")) {
-        return Some(json!({
+        return Some(
+            json!({
             "choices": [{
                 "delta": { "content": "" },
                 "finish_reason": "stop"
             }]
-        }));
+        })
+        );
     }
 
     let text = event
@@ -109,7 +114,7 @@ impl ProviderClient for GeminiClient {
     async fn stream_chat(
         &self,
         messages: Vec<Message>,
-        _tools: Option<Vec<Value>>,
+        _tools: Option<Vec<Value>>
     ) -> Result<Pin<Box<dyn Stream<Item = Result<Value>> + Send>>> {
         let url = format!(
             "{}/models/{}:streamGenerateContent?key={}",
@@ -123,15 +128,19 @@ impl ProviderClient for GeminiClient {
 
         for msg in messages {
             if msg.role == "system" {
-                system_instruction = Some(json!({
+                system_instruction = Some(
+                    json!({
                     "parts": [{ "text": msg.content }]
-                }));
+                })
+                );
             } else {
                 let role = if msg.role == "assistant" { "model" } else { "user" };
-                contents.push(json!({
+                contents.push(
+                    json!({
                     "role": role,
                     "parts": [{ "text": msg.content }]
-                }));
+                })
+                );
             }
         }
 
@@ -143,7 +152,8 @@ impl ProviderClient for GeminiClient {
             request_body["systemInstruction"] = sys;
         }
 
-        let client = reqwest::Client::builder()
+        let client = reqwest::Client
+            ::builder()
             .timeout(Duration::from_secs(300))
             .build()
             .context("Failed to build HTTP client")?;
@@ -152,8 +162,7 @@ impl ProviderClient for GeminiClient {
             .header("accept", "text/event-stream")
             .header("Content-Type", "application/json")
             .json(&request_body)
-            .send()
-            .await
+            .send().await
             .context("Failed to send request to Gemini API")?;
 
         if !response.status().is_success() {
@@ -167,137 +176,143 @@ impl ProviderClient for GeminiClient {
             chunk.context("Failed to read stream chunk")
         });
 
-        let stream = Box::pin(async_stream::stream! {
-            let mut raw_stream = stream;
-            let mut buffer: Vec<u8> = Vec::new();
+        let stream = Box::pin(
+            async_stream::stream! {
+                let mut raw_stream = stream;
+                let mut buffer: Vec<u8> = Vec::new();
 
-            while let Some(chunk_result) = tokio_stream::StreamExt::next(&mut raw_stream).await {
-                let bytes = chunk_result?;
-                buffer.extend_from_slice(bytes.as_ref());
+                while let Some(chunk_result) = tokio_stream::StreamExt::next(&mut raw_stream).await {
+                    let bytes = chunk_result?;
+                    buffer.extend_from_slice(bytes.as_ref());
 
-                while let Some(frame_bytes) = extract_sse_frame_from_buffer(&mut buffer) {
-                    let frame = String::from_utf8_lossy(&frame_bytes);
-                    let Some(data) = sse_data_from_frame(&frame) else {
-                        continue;
-                    };
+                    while let Some(frame_bytes) = extract_sse_frame_from_buffer(&mut buffer) {
+                        let frame = String::from_utf8_lossy(&frame_bytes);
+                        let Some(data) = sse_data_from_frame(&frame) else {
+                            continue;
+                        };
 
-                    let data_trimmed = data.trim();
-                    if data_trimmed.is_empty() {
-                        continue;
-                    }
-                    if data_trimmed == "[DONE]" {
-                        yield Ok(json!({
+                        let data_trimmed = data.trim();
+                        if data_trimmed.is_empty() {
+                            continue;
+                        }
+                        if data_trimmed == "[DONE]" {
+                            yield Ok(
+                                json!({
                             "choices": [{
                                 "delta": { "content": "" },
                                 "finish_reason": "stop"
                             }]
-                        }));
-                        return;
-                    }
+                        })
+                            );
+                            return;
+                        }
 
-                    let parsed: Value = match serde_json::from_str(data_trimmed) {
-                        Ok(v) => v,
-                        Err(_) => continue,
-                    };
-
-                    match parsed {
-                        Value::Array(arr) => {
-                            for event in arr {
-                                if let Some(out) = stream_value_from_gemini_event(&event) {
-                                    let is_stop = out
-                                        .pointer("/choices/0/finish_reason")
-                                        .and_then(|v| v.as_str())
-                                        .is_some_and(|r| r == "stop");
-                                    yield Ok(out);
-                                    if is_stop {
-                                        return;
-                                    }
-                                }
+                        let parsed: Value = match serde_json::from_str(data_trimmed) {
+                            Ok(v) => v,
+                            Err(_) => {
+                                continue;
                             }
-                        }
-                        _ => {
-                            if let Some(out) = stream_value_from_gemini_event(&parsed) {
-                                let is_stop = out
-                                    .pointer("/choices/0/finish_reason")
-                                    .and_then(|v| v.as_str())
-                                    .is_some_and(|r| r == "stop");
-                                yield Ok(out);
-                                if is_stop {
-                                    return;
-                                }
-                            }
-                        }
-                    }
-                }
+                        };
 
-                while let Some(pos) = buffer.iter().position(|b| *b == b'\n') {
-                    let line_bytes: Vec<u8> = buffer.drain(..=pos).collect();
-                    let line = String::from_utf8_lossy(&line_bytes);
-                    let line = line.trim();
-                    if line.is_empty() {
-                        continue;
-                    }
-
-                    let parsed: Value = match serde_json::from_str(line) {
-                        Ok(v) => v,
-                        Err(_) => {
-                            buffer.splice(0..0, line_bytes.into_iter());
-                            break;
-                        }
-                    };
-                    match parsed {
-                        Value::Array(arr) => {
-                            for event in arr {
-                                if let Some(out) = stream_value_from_gemini_event(&event) {
-                                    let is_stop = out
-                                        .pointer("/choices/0/finish_reason")
-                                        .and_then(|v| v.as_str())
-                                        .is_some_and(|r| r == "stop");
-                                    yield Ok(out);
-                                    if is_stop {
-                                        return;
-                                    }
-                                }
-                            }
-                        }
-                        _ => {
-                            if let Some(out) = stream_value_from_gemini_event(&parsed) {
-                                let is_stop = out
-                                    .pointer("/choices/0/finish_reason")
-                                    .and_then(|v| v.as_str())
-                                    .is_some_and(|r| r == "stop");
-                                yield Ok(out);
-                                if is_stop {
-                                    return;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            if !buffer.is_empty() {
-                if let Ok(text) = std::str::from_utf8(&buffer) {
-                    let text = text.trim();
-                    if let Ok(parsed) = serde_json::from_str::<Value>(text) {
                         match parsed {
                             Value::Array(arr) => {
                                 for event in arr {
                                     if let Some(out) = stream_value_from_gemini_event(&event) {
+                                        let is_stop = out
+                                            .pointer("/choices/0/finish_reason")
+                                            .and_then(|v| v.as_str())
+                                            .is_some_and(|r| r == "stop");
                                         yield Ok(out);
+                                        if is_stop {
+                                            return;
+                                        }
                                     }
                                 }
                             }
                             _ => {
                                 if let Some(out) = stream_value_from_gemini_event(&parsed) {
+                                    let is_stop = out
+                                        .pointer("/choices/0/finish_reason")
+                                        .and_then(|v| v.as_str())
+                                        .is_some_and(|r| r == "stop");
                                     yield Ok(out);
+                                    if is_stop {
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    while let Some(pos) = buffer.iter().position(|b| *b == b'\n') {
+                        let line_bytes: Vec<u8> = buffer.drain(..=pos).collect();
+                        let line = String::from_utf8_lossy(&line_bytes);
+                        let line = line.trim();
+                        if line.is_empty() {
+                            continue;
+                        }
+
+                        let parsed: Value = match serde_json::from_str(line) {
+                            Ok(v) => v,
+                            Err(_) => {
+                                buffer.splice(0..0, line_bytes.into_iter());
+                                break;
+                            }
+                        };
+                        match parsed {
+                            Value::Array(arr) => {
+                                for event in arr {
+                                    if let Some(out) = stream_value_from_gemini_event(&event) {
+                                        let is_stop = out
+                                            .pointer("/choices/0/finish_reason")
+                                            .and_then(|v| v.as_str())
+                                            .is_some_and(|r| r == "stop");
+                                        yield Ok(out);
+                                        if is_stop {
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
+                            _ => {
+                                if let Some(out) = stream_value_from_gemini_event(&parsed) {
+                                    let is_stop = out
+                                        .pointer("/choices/0/finish_reason")
+                                        .and_then(|v| v.as_str())
+                                        .is_some_and(|r| r == "stop");
+                                    yield Ok(out);
+                                    if is_stop {
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if !buffer.is_empty() {
+                    if let Ok(text) = std::str::from_utf8(&buffer) {
+                        let text = text.trim();
+                        if let Ok(parsed) = serde_json::from_str::<Value>(text) {
+                            match parsed {
+                                Value::Array(arr) => {
+                                    for event in arr {
+                                        if let Some(out) = stream_value_from_gemini_event(&event) {
+                                            yield Ok(out);
+                                        }
+                                    }
+                                }
+                                _ => {
+                                    if let Some(out) = stream_value_from_gemini_event(&parsed) {
+                                        yield Ok(out);
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
-        });
+        );
 
         Ok(stream)
     }
@@ -315,15 +330,19 @@ impl ProviderClient for GeminiClient {
 
         for msg in messages {
             if msg.role == "system" {
-                system_instruction = Some(json!({
+                system_instruction = Some(
+                    json!({
                     "parts": [{ "text": msg.content }]
-                }));
+                })
+                );
             } else {
                 let role = if msg.role == "assistant" { "model" } else { "user" };
-                contents.push(json!({
+                contents.push(
+                    json!({
                     "role": role,
                     "parts": [{ "text": msg.content }]
-                }));
+                })
+                );
             }
         }
 
@@ -335,7 +354,8 @@ impl ProviderClient for GeminiClient {
             request_body["systemInstruction"] = sys;
         }
 
-        let client = reqwest::Client::builder()
+        let client = reqwest::Client
+            ::builder()
             .timeout(Duration::from_secs(300))
             .build()
             .context("Failed to build HTTP client")?;
@@ -343,8 +363,7 @@ impl ProviderClient for GeminiClient {
             .post(&url)
             .header("Content-Type", "application/json")
             .json(&request_body)
-            .send()
-            .await
+            .send().await
             .context("Failed to send request to Gemini API")?;
 
         if !response.status().is_success() {
@@ -367,20 +386,26 @@ impl ProviderClient for GeminiClient {
             .and_then(|t| t.as_str())
             .unwrap_or_default();
 
-        Ok(json!({
+        Ok(
+            json!({
             "choices": [{
                 "message": {
                     "role": "assistant",
                     "content": content
                 }
             }]
-        }))
+        })
+        )
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{extract_sse_frame_from_buffer, sse_data_from_frame, stream_value_from_gemini_event};
+    use super::{
+        extract_sse_frame_from_buffer,
+        sse_data_from_frame,
+        stream_value_from_gemini_event,
+    };
     use serde_json::json;
 
     #[test]
@@ -405,19 +430,26 @@ mod tests {
 
     #[test]
     fn stream_value_from_gemini_event_extracts_text() {
-        let event = json!({
+        let event =
+            json!({
             "candidates": [{
                 "content": { "parts": [{ "text": "hi" }] }
             }]
         });
         let out = stream_value_from_gemini_event(&event).expect("out");
-        assert_eq!(out.pointer("/choices/0/delta/content").and_then(|v| v.as_str()), Some("hi"));
+        assert_eq!(
+            out.pointer("/choices/0/delta/content").and_then(|v| v.as_str()),
+            Some("hi")
+        );
     }
 
     #[test]
     fn stream_value_from_gemini_event_handles_stop() {
         let event = json!({ "finishReason": "STOP" });
         let out = stream_value_from_gemini_event(&event).expect("out");
-        assert_eq!(out.pointer("/choices/0/finish_reason").and_then(|v| v.as_str()), Some("stop"));
+        assert_eq!(
+            out.pointer("/choices/0/finish_reason").and_then(|v| v.as_str()),
+            Some("stop")
+        );
     }
 }

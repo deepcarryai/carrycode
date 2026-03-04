@@ -11,7 +11,7 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType>({
   theme: themes.carrycodeDark,
-  setThemeName: () => {},
+  setThemeName: () => { },
   availableThemes: [],
 });
 
@@ -32,8 +32,8 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, []);
 
   const setThemeName = (name: string) => {
-      setThemeNameState(name);
-      saveTheme(name).catch(() => {});
+    setThemeNameState(name);
+    saveTheme(name).catch(() => { });
   };
 
   const theme = Object.values(themes).find(t => t.name === themeName) || themes.carrycodeDark;

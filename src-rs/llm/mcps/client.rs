@@ -1,9 +1,9 @@
-use anyhow::{anyhow, Context, Result};
-use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use anyhow::{ anyhow, Context, Result };
+use serde::{ Deserialize, Serialize };
+use serde_json::{ json, Value };
 use std::collections::HashMap;
-use std::io::{BufRead, BufReader, Write, Read};
-use std::process::{Child, Command, Stdio};
+use std::io::{ BufRead, BufReader, Write, Read };
+use std::process::{ Child, Command, Stdio };
 use std::sync::Mutex;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -44,7 +44,7 @@ enum Transport {
         client: reqwest::blocking::Client,
         endpoint: Option<String>,
         reader: std::io::Lines<BufReader<Box<dyn Read + Send>>>,
-    }
+    },
 }
 
 struct ClientInner {
@@ -57,11 +57,7 @@ pub struct McpClient {
 }
 
 impl McpClient {
-    pub fn new(
-        command: &str,
-        args: &[String],
-        env: &HashMap<String, String>,
-    ) -> Result<Self> {
+    pub fn new(command: &str, args: &[String], env: &HashMap<String, String>) -> Result<Self> {
         let mut cmd = Command::new(command);
         cmd.args(args);
         cmd.envs(env);
@@ -87,23 +83,20 @@ impl McpClient {
         })
     }
 
-    pub fn new_http(
-        url: &str,
-        headers: &HashMap<String, String>,
-    ) -> Result<Self> {
+    pub fn new_http(url: &str, headers: &HashMap<String, String>) -> Result<Self> {
         let client = reqwest::blocking::Client::new();
         let mut req_builder = client.get(url);
-        
+
         for (k, v) in headers {
             req_builder = req_builder.header(k, v);
         }
         req_builder = req_builder.header("Accept", "text/event-stream");
 
         let response = req_builder.send().context("Failed to connect to MCP SSE endpoint")?;
-        
+
         let status = response.status();
         if !status.is_success() {
-             return Err(anyhow!("Failed to connect to MCP SSE endpoint: {}", status));
+            return Err(anyhow!("Failed to connect to MCP SSE endpoint: {}", status));
         }
 
         // We wrap the response body reader.
@@ -126,7 +119,7 @@ impl McpClient {
 
     pub fn request(&self, method: &str, params: Option<Value>) -> Result<Value> {
         let mut inner = self.inner.lock().map_err(|_| anyhow!("Failed to lock client"))?;
-        
+
         inner.request_id += 1;
         let id = inner.request_id;
 
@@ -145,49 +138,53 @@ impl McpClient {
                 stdin.flush()?;
             }
             Transport::Http { client, endpoint, .. } => {
-                let endpoint_url = endpoint.as_ref().ok_or_else(|| anyhow!("MCP endpoint not initialized"))?;
+                let endpoint_url = endpoint
+                    .as_ref()
+                    .ok_or_else(|| anyhow!("MCP endpoint not initialized"))?;
                 // Send POST request
-                let res = client.post(endpoint_url)
-                    .json(&req)
-                    .send()?;
-                
+                let res = client.post(endpoint_url).json(&req).send()?;
+
                 if !res.status().is_success() {
                     let text = res.text().unwrap_or_default();
                     return Err(anyhow!("MCP request failed: {} - {}", endpoint_url, text));
                 }
-                
+
                 // Return immediate result if the response is the JSON-RPC response already?
                 // The spec says: "The server MUST send a POST request... for messages..."
                 // But wait, the client sends messages via POST.
                 // The server sends responses via SSE.
                 // UNLESS the response comes back immediately in the POST body?
                 // "The server may optionally return a response in the POST body."
-                
+
                 let text = res.text()?;
                 if !text.is_empty() {
-                     // If we got a response immediately, use it
-                     if let Ok(resp) = serde_json::from_str::<JsonRpcResponse>(&text) {
-                         if let Some(resp_id) = &resp.id {
-                             if resp_id.as_u64() == Some(id) {
-                                  if let Some(err) = resp.error {
-                                      return Err(anyhow!("MCP Error {}: {}", err.code, err.message));
-                                  }
-                                  return Ok(resp.result.unwrap_or(Value::Null));
-                             }
-                         }
-                     }
+                    // If we got a response immediately, use it
+                    if let Ok(resp) = serde_json::from_str::<JsonRpcResponse>(&text) {
+                        if let Some(resp_id) = &resp.id {
+                            if resp_id.as_u64() == Some(id) {
+                                if let Some(err) = resp.error {
+                                    return Err(anyhow!("MCP Error {}: {}", err.code, err.message));
+                                }
+                                return Ok(resp.result.unwrap_or(Value::Null));
+                            }
+                        }
+                    }
                 }
             }
         }
-        
+
         // Loop to find response
         loop {
             let line = match &mut inner.transport {
                 Transport::Stdio { reader, .. } => {
                     match reader.next() {
                         Some(Ok(l)) => l,
-                        Some(Err(e)) => return Err(anyhow!("Failed to read from MCP: {}", e)),
-                        None => return Err(anyhow!("MCP stream ended")),
+                        Some(Err(e)) => {
+                            return Err(anyhow!("Failed to read from MCP: {}", e));
+                        }
+                        None => {
+                            return Err(anyhow!("MCP stream ended"));
+                        }
                     }
                 }
                 Transport::Http { reader, .. } => {
@@ -195,9 +192,9 @@ impl McpClient {
                     // We need to accumulate "data:" lines until an empty line.
                     let mut event_type = String::new();
                     let mut data = String::new();
-                    
+
                     loop {
-                         match reader.next() {
+                        match reader.next() {
                             Some(Ok(l)) => {
                                 if l.is_empty() {
                                     // End of event
@@ -209,20 +206,24 @@ impl McpClient {
                                     data.push_str(&l[6..]);
                                 }
                             }
-                            Some(Err(e)) => return Err(anyhow!("Failed to read from MCP SSE: {}", e)),
-                            None => return Err(anyhow!("MCP SSE stream ended")),
+                            Some(Err(e)) => {
+                                return Err(anyhow!("Failed to read from MCP SSE: {}", e));
+                            }
+                            None => {
+                                return Err(anyhow!("MCP SSE stream ended"));
+                            }
                         }
                     }
-                    
-                    // Allow filtering by event type if needed? 
+
+                    // Allow filtering by event type if needed?
                     // Usually JSON-RPC messages are in 'message' event or default.
                     if event_type == "endpoint" {
                         // This should be handled in initialize?
                         // If we see it here, we might just ignore or update.
-                         log::info!("Received endpoint event during request: {}", data);
-                         continue;
+                        log::info!("Received endpoint event during request: {}", data);
+                        continue;
                     }
-                    
+
                     data
                 }
             };
@@ -238,8 +239,8 @@ impl McpClient {
                 }
                 log::debug!("Ignored MCP message: {}", line);
             } else {
-                 // Try to parse as notification (no id) or just log
-                 log::debug!("MCP Raw Output: {}", line);
+                // Try to parse as notification (no id) or just log
+                log::debug!("MCP Raw Output: {}", line);
             }
         }
     }
@@ -247,39 +248,46 @@ impl McpClient {
     pub fn initialize(&self) -> Result<()> {
         // Special handling for HTTP: wait for endpoint event
         {
-             let mut inner = self.inner.lock().map_err(|_| anyhow!("Failed to lock client"))?;
-             if let Transport::Http { reader, endpoint, .. } = &mut inner.transport {
-                 // We need to read the first event which should be 'endpoint'
-                 // Loop until we find it
-                 loop {
+            let mut inner = self.inner.lock().map_err(|_| anyhow!("Failed to lock client"))?;
+            if let Transport::Http { reader, endpoint, .. } = &mut inner.transport {
+                // We need to read the first event which should be 'endpoint'
+                // Loop until we find it
+                loop {
                     let mut event_type = String::new();
                     let mut data = String::new();
-                    
+
                     loop {
-                         match reader.next() {
+                        match reader.next() {
                             Some(Ok(l)) => {
-                                if l.is_empty() { break; }
+                                if l.is_empty() {
+                                    break;
+                                }
                                 if l.starts_with("event: ") {
                                     event_type = l[7..].trim().to_string();
                                 } else if l.starts_with("data: ") {
                                     data.push_str(&l[6..]);
                                 }
                             }
-                            Some(Err(e)) => return Err(anyhow!("Failed to read from MCP SSE: {}", e)),
-                            None => return Err(anyhow!("MCP SSE stream ended")),
+                            Some(Err(e)) => {
+                                return Err(anyhow!("Failed to read from MCP SSE: {}", e));
+                            }
+                            None => {
+                                return Err(anyhow!("MCP SSE stream ended"));
+                            }
                         }
                     }
-                    
+
                     if event_type == "endpoint" {
                         *endpoint = Some(data.trim().to_string());
                         log::info!("MCP HTTP Endpoint discovered: {}", data);
                         break;
                     }
-                 }
-             }
+                }
+            }
         }
 
-        let params = json!({
+        let params =
+            json!({
             "protocolVersion": "2024-11-05",
             "capabilities": {
                 "roots": {
@@ -294,9 +302,9 @@ impl McpClient {
         });
 
         self.request("initialize", Some(params))?;
-        
+
         self.notify("notifications/initialized", None)?;
-        
+
         Ok(())
     }
 
@@ -317,19 +325,19 @@ impl McpClient {
                 stdin.write_all(b"\n")?;
                 stdin.flush()?;
             }
-             Transport::Http { client, endpoint, .. } => {
-                 let endpoint_url = endpoint.as_ref().ok_or_else(|| anyhow!("MCP endpoint not initialized"))?;
-                 client.post(endpoint_url)
-                    .json(&req)
-                    .send()?;
-             }
+            Transport::Http { client, endpoint, .. } => {
+                let endpoint_url = endpoint
+                    .as_ref()
+                    .ok_or_else(|| anyhow!("MCP endpoint not initialized"))?;
+                client.post(endpoint_url).json(&req).send()?;
+            }
         }
         Ok(())
     }
 
     pub fn list_tools(&self) -> Result<Vec<Value>> {
         let response = self.request("tools/list", None)?;
-        
+
         if let Some(tools) = response.get("tools").and_then(|t| t.as_array()) {
             Ok(tools.clone())
         } else {
