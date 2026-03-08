@@ -13,7 +13,7 @@
   <span class="dot"></span>
   <span ><a href="http://cdn.carrycode.ai/extension/carrycode-vscode-0.6.11.vsix" target="_blank"><img alt="Static Badge" src="https://img.shields.io/badge/Extension-VSCode-8A2BE2?style=flat&logo=applearcade"></a></span>
   <span class="dot"></span>
-  <span ><a href="https://github.com/deepcarryai/carrycode" target="_blank"><img alt="Static Badge" src="https://img.shields.io/badge/GITHUB-v0.6.7-green?style=flat&logo=github"></a></span>
+  <span ><a href="https://github.com/deepcarryai/carrycode" target="_blank"><img alt="Static Badge" src="https://img.shields.io/badge/GITHUB-v0.7.3-green?style=flat&logo=github"></a></span>
   <span class="dot"></span>
   <span ><a href="./README.md"><img src="https://img.shields.io/badge/README-EN-red?style=flat&logo=readme" /></a><span >
 </p>
