@@ -10,7 +10,7 @@
 
 
 <p align="center">
-  <img src="https://visitor-badge.laobi.icu/badge?page_id=deepcarryai-carrycode-repo" />
+  <img src="https://visitor-badge.laobi.icu/badge?page_id=deepcarryai-carrycode-repo&left_color=red&right_color=green&left_text=Downloads" />
   <span ><a href="https://carrycode.ai"><img alt="Static Badge" src="https://img.shields.io/badge/HOMEPAGE-CARRYCODE-blue?style=flat&logoColor=orange&color=pink&logo=operagx"></a></span>
   <span class="dot"></span>
   <span ><a href="http://cdn.carrycode.ai/extension/carrycode-vscode-0.6.11.vsix" target="_blank"><img alt="Static Badge" src="https://img.shields.io/badge/Extension-VSCode-8A2BE2?style=flat&logo=applearcade"></a></span>
