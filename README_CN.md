@@ -41,23 +41,23 @@
 </details>
 
 ## ✨ 核心亮点
-- 🌐 **浏览器自动化工具** - 强大的内置工具的web自动化，使一个I与网页交互。
-- 🤖 **双模式 Agent** — **Build 模式**自主生成和编辑代码；**Plan 模式**只读分析和规划方案。
-- 🔌 **17+ 模型服务商** — OpenAI、Claude、Gemini、DeepSeek、Kimi、GLM、MiniMax、通义千问、Grok、Ollama、vLLM，以及任何 OpenAI 兼容接口。
-- 🚀 **240+ LLM Models** - GPT-5.2, Claude-Opus-4.6, Claude-Sonnet-4.5, Gemini-3-Pro, Gemini-3-Flash, Kimi-2.5, MiniMax-M2, GLM-4.7, DeepSeek-V3.2, Qwen3 等等在编程领域的最新SOTA模型.
-- 🧩 **MCP 协议** — 通过 Model Context Protocol 服务器扩展智能体能力。使用 `/mcp` 添加、编辑和管理 MCP 服务器。
-- 🎯 **Skills 技能系统** — 加载预定义或自定义技能，引导 CarryCode 更好地完成特定任务。使用 `/skill` 管理。
-- 🔍 **技能中心集成**-从腾讯技能中心发现和安装技能，通过名称或描述查找技能，从搜索结果直接安装。
-- 📋 **AGENTS.md** — 在项目根目录放置 `AGENTS.md` 文件，为 CarryCode 提供项目专属的指令和规范。
-- 🎨 **精美终端 UI** — 丰富的 TUI 界面，支持渐变 Banner、Markdown 渲染、语法高亮代码块和内联 Diff 预览。
-- 🌗 **主题切换** — 通过 `/theme` 在亮色和暗色主题之间切换代码高亮和 Diff 预览样式。
-- 🌍 **多语言** — 支持 English 和简体中文界面，随时通过 `/language` 切换。
-- 💬 **会话管理** — 创建、切换和恢复会话，上下文在对话间持久保存。
-- 🗜️ **智能上下文压缩** — 自动压缩长对话以适应 Token 限制，同时保留关键上下文。
-- 🩺 **LSP 代码诊断** — 集成语言服务器协议（如 rust-analyzer），实时检测代码错误和警告。
-- 🔒 **审批模式** — 控制 CarryCode 的权限：`read-only`（只读）、`agent`（读写+执行）或 `agent-full`（无限制）。
-- 📈 **Mermaid渲染** - 直接在您的终端中查看图表，在没有浏览器的情况下使用基于c - I的图表，优化了对c - j - k字符的对齐。
-- 🔄 **一键更新** — 运行 `/update` 即可检查并安装最新版本。
+1. 🌐 **浏览器自动化工具** - 强大的内置工具的web自动化，使一个I与网页交互。
+2. 🤖 **双模式 Agent** — **Build 模式**自主生成和编辑代码；**Plan 模式**只读分析和规划方案。
+3. 🔌 **17+ 模型服务商** — OpenAI、Claude、Gemini、DeepSeek、Kimi、GLM、MiniMax、通义千问、Grok、Ollama、vLLM，以及任何 OpenAI 兼容接口。
+4. 🚀 **240+ LLM Models** - GPT-5.2, Claude-Opus-4.6, Claude-Sonnet-4.5, Gemini-3-Pro, Gemini-3-Flash, Kimi-2.5, MiniMax-M2, GLM-4.7, DeepSeek-V3.2, Qwen3 等等在编程领域的最新SOTA模型.
+5. 🧩 **MCP 协议** — 通过 Model Context Protocol 服务器扩展智能体能力。使用 `/mcp` 添加、编辑和管理 MCP 服务器。
+6. 🎯 **Skills 技能系统** — 加载预定义或自定义技能，引导 CarryCode 更好地完成特定任务。使用 `/skill` 管理。
+7. 🔍 **技能中心集成**-从腾讯技能中心发现和安装技能，通过名称或描述查找技能，从搜索结果直接安装。
+8. 📋 **AGENTS.md** — 在项目根目录放置 `AGENTS.md` 文件，为 CarryCode 提供项目专属的指令和规范。
+9. 🎨 **精美终端 UI** — 丰富的 TUI 界面，支持渐变 Banner、Markdown 渲染、语法高亮代码块和内联 Diff 预览。
+10. 🌗 **主题切换** — 通过 `/theme` 在亮色和暗色主题之间切换代码高亮和 Diff 预览样式。
+11. 🌍 **多语言** — 支持 English 和简体中文界面，随时通过 `/language` 切换。
+12. 💬 **会话管理** — 创建、切换和恢复会话，上下文在对话间持久保存。
+13. 🗜️ **智能上下文压缩** — 自动压缩长对话以适应 Token 限制，同时保留关键上下文。
+14. 🩺 **LSP 代码诊断** — 集成语言服务器协议（如 rust-analyzer），实时检测代码错误和警告。
+15. 🔒 **审批模式** — 控制 CarryCode 的权限：`read-only`（只读）、`agent`（读写+执行）或 `agent-full`（无限制）。
+16. 📈 **Mermaid渲染** - 直接在您的终端中查看图表，在没有浏览器的情况下使用基于c - I的图表，优化了对c - j - k字符的对齐。
+17. 🔄 **一键更新** — 运行 `/update` 即可检查并安装最新版本。
 
 ## 📦 安装
 
