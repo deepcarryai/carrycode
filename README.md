@@ -43,13 +43,14 @@
 </details>
 
 ## ✨ Highlights
-
+- 🌐 **Browser Automation Tool** - Powerful built-in tool for web automation, enabling AI to interact with web pages.
 - 🤖 **Dual Agent Modes** — **Build** mode for autonomous code generation and editing; **Plan** mode for read-only analysis and planning.
 - 🔌 **17+ LLM Providers** — OpenAI, Claude, Gemini, DeepSeek, Kimi, GLM, MiniMax, Qwen, Grok, Ollama, vLLM, and any OpenAI-compatible endpoint.
 - 🚀 **240+ LLM Models** - GPT-5.2, Claude-Opus-4.6, Claude-Sonnet-4.5, Gemini-3-Pro, Gemini-3-Flash, Kimi-2.5, MiniMax-M2, GLM-4.7, DeepSeek-V3.2, Qwen3 etc. The latest SOTA models in the field of programming.
 - 🧩 **MCP Protocol** — Extend your agent with Model Context Protocol servers. Add, edit, and manage MCP servers via `/mcp`.
 - 🎯 **Skills System** — Load predefined or custom skills to guide how CarryCode performs specific tasks. Manage via `/skill`.
-- 📋 **AGENTS.md** — Drop an `AGENTS.md` file in your project root to give CarryCode project-specific instructions and conventions.
+- 🔍 **SkillHub Integration** - Discover and install skills from Tencent SkillHub, Find skills by name or description, Direct installation from search results.
+- 📋 **AGENTS.md** — run `/init` command to create `AGENTS.md` file in your project root to give CarryCode project-specific instructions and conventions.
 - 🎨 **Beautiful Terminal UI** — Rich TUI with gradient banners, Markdown rendering, syntax-highlighted code blocks, and inline diff previews.
 - 🌗 **Themes** — Switch between light and dark themes for code highlighting and diff previews via `/theme`.
 - 🌍 **Multi-Language** — English and Chinese interface. Switch anytime via `/language`.
@@ -57,6 +58,7 @@
 - 🗜️ **Smart Context Compaction** — Automatically compresses long conversations to stay within token limits while preserving key context.
 - 🩺 **LSP Diagnostics** — Integrated Language Server Protocol support (e.g., rust-analyzer) for real-time error and warning detection.
 - 🔒 **Approval Modes** — Control what CarryCode can do: `read-only`, `agent` (read + write + execute), or `agent-full` (unrestricted).
+- 📈 **Mermaid Rendering** - View diagrams directly in your terminal, ASCII-based diagrams without browser, Optimized alignment for CJK characters.
 - 🔄 **One-Click Update** — Run `/update` to check and install the latest version in-place.
 
 ## 📦 Installation
